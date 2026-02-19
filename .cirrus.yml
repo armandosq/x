@@ -1,4 +1,7 @@
 rdp_task:
+  env:
+    TAILSCALE_AUTH_KEY: ENCRYPTED[!db631b422df30e8e6376ed3ba6e1858778c3ac598ef620d31c64297cea09669d97ffdc47ccef486dc6229d8f95e5965b!]
+
   windows_container:
     image: cirrusci/windowsservercore:2019
     cpu: 4
