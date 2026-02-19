@@ -14,7 +14,7 @@ rdp_task:
     - powershell -Command "Restart-Service -Name TermService -Force"
 
   create_user_script:
-    - powershell -Command "$pass = ConvertTo-SecureString 'MiPassword123!' -AsPlainText -Force; New-LocalUser -Name RDP -Password $pass -AccountNeverExpires"
+    - powershell -Command "$pass = ConvertTo-SecureString 'Arma654456qweqwe@@@' -AsPlainText -Force; New-LocalUser -Name RDP -Password $pass -AccountNeverExpires"
     - powershell -Command "Add-LocalGroupMember -Group Administrators -Member RDP"
     - powershell -Command "Add-LocalGroupMember -Group 'Remote Desktop Users' -Member RDP"
 
@@ -28,3 +28,12 @@ rdp_task:
 
   keep_alive_script:
     - powershell -Command "while($true){ Write-Host \"[$(Get-Date)] Activo...\"; Start-Sleep 300 }"
+```
+
+---
+
+**Antes de hacer commit:**
+
+1. Agrega el secret en Cirrus CI → tu repo → **Settings** → **Encrypted Variables**:
+```
+TAILSCALE_AUTH_KEY = tskey-auth-kUeDRtwmx521CNTRL-iUeQ1U879vDT54PGbH4LuDcc58nUr7Ui
