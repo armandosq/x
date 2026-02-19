@@ -10,7 +10,7 @@ rdp_task:
     - powershell -Command "Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server' -Name fDenyTSConnections -Value 0 -Force"
     - powershell -Command "Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp' -Name UserAuthentication -Value 0 -Force"
     - powershell -Command "Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp' -Name SecurityLayer -Value 0 -Force"
-    - powershell -Command "netsh advfirewall firewall add rule name='RDP' dir=in action=allow protocol=TCP localport=3389"
+    - powershell -Command "netsh advfirewall firewall add rule name=RDP dir=in action=allow protocol=TCP localport=3389"
     - powershell -Command "Restart-Service -Name TermService -Force"
 
   create_user_script:
@@ -20,20 +20,11 @@ rdp_task:
 
   install_tailscale_script:
     - powershell -Command "Invoke-WebRequest -Uri https://pkgs.tailscale.com/stable/tailscale-setup-1.82.0-amd64.msi -OutFile $env:TEMP\tailscale.msi"
-    - powershell -Command "Start-Process msiexec.exe -ArgumentList '/i', \"$env:TEMP\tailscale.msi\", '/quiet', '/norestart' -Wait"
+    - powershell -Command "Start-Process msiexec.exe -ArgumentList '/i' '$env:TEMP\tailscale.msi' '/quiet' '/norestart' -Wait"
 
   connect_tailscale_script:
-    - powershell -Command "& '$env:ProgramFiles\Tailscale\tailscale.exe' up --authkey=%TAILSCALE_AUTH_KEY% --hostname=cirrus-%CIRRUS_TASK_ID%"
-    - powershell -Command "$ip = & '$env:ProgramFiles\Tailscale\tailscale.exe' ip -4; Write-Host '=== TAILSCALE IP:' $ip '==='"
+    - powershell -Command "& '$env:ProgramFiles\Tailscale\tailscale.exe' up --authkey=$env:TAILSCALE_AUTH_KEY --hostname=cirrus-$env:CIRRUS_TASK_ID"
+    - powershell -Command "$ip = & '$env:ProgramFiles\Tailscale\tailscale.exe' ip -4; Write-Host TAILSCALE_IP $ip"
 
   keep_alive_script:
-    - powershell -Command "while($true){ Write-Host \"[$(Get-Date)] Activo...\"; Start-Sleep 300 }"
-```
-
----
-
-**Antes de hacer commit:**
-
-1. Agrega el secret en Cirrus CI → tu repo → **Settings** → **Encrypted Variables**:
-```
-TAILSCALE_AUTH_KEY = tskey-auth-kUeDRtwmx521CNTRL-iUeQ1U879vDT54PGbH4LuDcc58nUr7Ui
+    - powershell -Command "while($true){ Write-Host Activo; Start-Sleep 300 }"
